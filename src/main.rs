@@ -1,15 +1,28 @@
-use std::env;
-use std::path::Path;
-
 mod hashing;
 use hashing::hash_file;
+use std::process::exit;
+use structopt::StructOpt;
+
+#[derive(StructOpt)]
+#[structopt(name = "Hashasum")]
+struct Options {
+    /// type of hashing algorithm to perform on file at inputted path
+    #[structopt(short = "m", long = "method")]
+    method: String,
+    /// path to a local file to attempt to perform hashing on
+    #[structopt(short = "p", long = "path", parse(from_os_str))]
+    path: std::path::PathBuf
+}
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let args = Options::from_args();
+    let hash_str = hash_file(&args.method, &args.path);
 
-    let hashing_method = &args[1];
-    let file_path = Path::new(&args[2]);
-
-    let hash_str = hash_file(hashing_method, file_path);
-    println!("{}   {}", hash_str, file_path.display());
+    match hash_str {
+        Ok(hash) => println!("{}   {}", hash, args.path.display()),
+        Err(reason) => {
+            println!("Problem hashing file: {}", reason);
+            exit(1);
+        }
+    }
 }

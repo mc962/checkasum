@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 ring="0.16.4"
 data-encoding="2.2.1"
+structopt = "0.3.14"

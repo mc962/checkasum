@@ -1,17 +1,23 @@
 use std::path::Path;
-use std::io::{BufReader, Read};
+use std::io::{BufReader, Read, Error};
 use std::fs::File;
 use ring::digest::{Context, SHA256};
 use data_encoding::HEXLOWER;
 
-pub fn hash_file(hashing_method: &str, path: &Path) -> String {
+pub fn hash_file(hashing_method: &str, path: &Path) -> Result<String, Error> {
     let reader = file_reader(path);
-    let digest  = match hashing_method {
-        "sha256" => hash_sha256(reader),
-        _ => panic!("Unknown hashing method: {}", hashing_method)
-    };
 
-    digest
+    match reader {
+        Ok(reader) => {
+            let digest  = match hashing_method {
+                "sha256" => hash_sha256(reader),
+                _ => panic!("unknown hashing method {}", hashing_method)
+            };
+
+            Ok(digest)
+        },
+        Err(reason) => Err(reason)
+    }
 }
 
 fn hash_sha256<R: Read>(mut reader: R) -> String {
@@ -25,9 +31,9 @@ fn hash_sha256<R: Read>(mut reader: R) -> String {
                 if count == 0 {
                     break;
                 }
-                context.update(&buffer[..count]);
+                context.update(&buffer[..count])
             },
-            Err(_reason) => panic!("couldn't read file contents into buffer}"),
+            Err(_reason) => println!("couldn't read file contents into buffer"),
         }
     }
 
@@ -35,11 +41,11 @@ fn hash_sha256<R: Read>(mut reader: R) -> String {
     HEXLOWER.encode(digest.as_ref())
 }
 
-fn file_reader(path: &Path) -> BufReader<File>{
-    let in_file = match File::open(path) {
-        Err(reason) => panic!("couldn't open {}: {}", path.display(), reason),
-        Ok(file) => file
-    };
+fn file_reader(path: &Path) -> Result<BufReader<File>, Error> {
+    let in_file = File::open(path);
 
-    BufReader::new(in_file)
+    match in_file {
+        Ok(file) => Ok(BufReader::new(file)),
+        Err(reason) => Err(reason)
+    }
 }
