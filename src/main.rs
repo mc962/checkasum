@@ -1,18 +1,11 @@
 mod hashing;
 use hashing::hash_file;
 use std::process::exit;
-use structopt::StructOpt;
 
-#[derive(StructOpt)]
-#[structopt(name = "Hashasum")]
-struct Options {
-    /// type of hashing algorithm to perform on file at inputted path
-    #[structopt(short = "m", long = "method")]
-    method: String,
-    /// path to a local file to attempt to perform hashing on
-    #[structopt(short = "p", long = "path", parse(from_os_str))]
-    path: std::path::PathBuf
-}
+mod cli;
+use cli::Options;
+// StructOpt import is required here for using its from_args method with Options
+use structopt::StructOpt;
 
 fn main() {
     let args = Options::from_args();
