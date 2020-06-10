@@ -1,5 +1,6 @@
 use structopt::StructOpt;
 
+/// Populates CLI arguments for interacting with hashing module
 #[derive(StructOpt)]
 #[structopt(name = "Hashasum")]
 pub struct Options {
