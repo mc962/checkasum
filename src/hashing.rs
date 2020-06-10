@@ -4,6 +4,10 @@ use std::fs::File;
 use ring::digest::{Context, SHA256};
 use data_encoding::HEXLOWER;
 
+pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
+    file_hash == correct_hash
+}
+
 pub fn hash_file(hashing_method: &str, path: &Path) -> Result<String, Error> {
     let reader = file_reader(path);
 

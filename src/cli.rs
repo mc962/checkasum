@@ -8,5 +8,8 @@ pub struct Options {
     pub method: String,
     /// path to a local file to attempt to perform hashing on
     #[structopt(short = "p", long = "path", parse(from_os_str))]
-    pub path: std::path::PathBuf
+    pub path: std::path::PathBuf,
+    /// correct checksum for downloaded file
+    #[structopt(short="e", long="expected")]
+    pub expected: String
 }
