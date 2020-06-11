@@ -29,7 +29,7 @@ pub fn algorithm_type(method: &str) -> Result<HashAlgorithm, String> {
 
 /// Populates CLI arguments for interacting with hashing module
 #[derive(StructOpt)]
-#[structopt(name = "Hashasum")]
+#[structopt(name = "Checkasum")]
 pub struct Options {
     /// type of hashing algorithm to perform on file at inputted path
     #[structopt(short="m", long="method", possible_values=&["sha256"])]
