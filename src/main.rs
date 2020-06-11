@@ -1,17 +1,24 @@
-mod hashing;
-use hashing::hash_file;
 use std::process::exit;
-
-mod cli;
-use cli::Options;
 // StructOpt import is required here for using its from_args method with Options
 use structopt::StructOpt;
-use crate::hashing::hash_matches;
+
+pub mod hashing;
+use hashing::{hash_file, hash_matches};
+
+mod cli;
+use cli::{Options, algorithm_type};
 
 fn main() {
     let args = Options::from_args();
-    let hash_str = hash_file(&args.method, &args.path);
+    let algorithm = match algorithm_type(&args.method) {
+        Ok(algorithm) => algorithm,
+        Err(reason) => {
+            println!("Problem determining hashing algorithm: {}", reason);
+            exit(1);
+        }
+    };
 
+    let hash_str = hash_file(algorithm, &args.path);
     match hash_str {
         Ok(hash) => {
             println!("{}   {}", hash, args.path.display());

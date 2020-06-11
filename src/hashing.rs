@@ -1,8 +1,13 @@
-use std::path::Path;
-use std::io::{BufReader, Read, Error};
-use std::fs::File;
-use ring::digest::{Context, SHA256};
 use data_encoding::HEXLOWER;
+use ring::digest::{Context, SHA256};
+use std::fs::File;
+use std::io::{BufReader, Read, Error};
+use std::path::Path;
+
+/// Allowed hashing algorithms
+pub enum HashAlgorithm {
+    SHA256
+}
 
 /// Checks if hash generated from file matches the documented expected hash
 ///
@@ -27,32 +32,18 @@ pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
 /// hash_file("sha256", "/bob/path/to/file.iso");
 /// ```
 ///
-/// # Panics
-///
-/// Panics if an unknown hashing method is used
-/// ```
-/// use hashing::hash_file;
-///
-/// hash_file("made_up", "/bob/path/to/file.iso");
-/// ```
-///
 /// # Errors
 ///
 /// Bubbles up errors from file_reader
-/// ```
-/// file_reader("/a/b/c")
-/// ```
-pub fn hash_file(hashing_method: &str, path: &Path) -> Result<String, Error> {
+/// Bubbles up errors from attempting file hashing
+pub fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
     let reader = file_reader(path);
 
     match reader {
         Ok(reader) => {
-            let digest  = match hashing_method {
-                "sha256" => hash_sha256(reader),
-                _ => panic!("unknown hashing method {}", hashing_method)
-            };
-
-            Ok(digest)
+            match hashing_method {
+                HashAlgorithm::SHA256 => Ok(hash_sha256(reader))
+            }
         },
         Err(reason) => Err(reason)
     }
