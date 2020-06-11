@@ -1,10 +1,14 @@
 [package]
 name = "checkasum"
-version = "0.2.1"
+version = "0.1.0"
 authors = ["mc962 <11969409+mc962@users.noreply.github.com>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "A small utility to verify the data integrity of a downloaded file with its expected checksum."
+license = "MIT"
+repository = "https://github.com/mc962/checkasum"
+homepage = "https://github.com/mc962/checkasum"
+keywords = ["checksum", "hashing"]
+readme = "README.md"
 
 [dependencies]
 ring="0.16.4"
