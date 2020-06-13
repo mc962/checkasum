@@ -5,7 +5,10 @@ mod gui {
         pub mod view;
         pub mod state;
     }
-    // pub mod input_view;
+    pub mod input {
+        pub mod view;
+        pub mod state;
+    }
     // pub mod output_view;
 }
 
