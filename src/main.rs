@@ -1,5 +1,14 @@
 use orbtk::prelude::*;
 
+mod gui {
+    pub mod main {
+        pub mod view;
+        pub mod state;
+    }
+    // pub mod input_view;
+    // pub mod output_view;
+}
+
 fn main() {
     Application::new()
         .window(|ctx| {
@@ -7,7 +16,7 @@ fn main() {
                 .title("Checkasum")
                 .position((100.0, 100.0))
                 .size(420.0, 730.0)
-                .child(TextBlock::create().text("Checkasum").build(ctx))
+                .child(gui::main::view::MainView::create().build(ctx))
                 .build(ctx)
         })
         .run();
