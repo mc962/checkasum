@@ -9,7 +9,10 @@ mod gui {
         pub mod view;
         pub mod state;
     }
-    // pub mod output_view;
+    pub mod output {
+        pub mod view;
+        pub mod state;
+    }
 }
 
 fn main() {
