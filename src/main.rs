@@ -9,6 +9,10 @@ mod gui {
         pub mod view;
         pub mod state;
     }
+    pub mod calculate {
+        pub mod view;
+        pub mod state;
+    }
     pub mod output {
         pub mod view;
         pub mod state;
