@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Checkasum</title>
+
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+        <script>
+            require('../dist/renderer/render');
+        </script>
+        <link rel="stylesheet" type="text/css" href="../stylesheets/index.css" />
+    </head>
+    <body>
+        <header class="heading-container">
+            <h1>Checkasum</h1>
+        </header>
+        <main>
+            <div class="col input-container">
+                <div class="file_path_container">
+                    <label id="file_path_lbl" for="file_path">File Path: </label>
+                    <input type="text" id="file_path" name="file_path" />
+                </div>
+                <div class="checksum_container">
+                    <label id="checksum_text_lbl" for="checksum_text">Checksum: </label>
+                    <textarea id="checksum_text" name="checksum_text"></textarea>
+                </div>
+            </div>
+            <div class="col calculate-container">
+                <button type="button" id="calculate_btn">Check</button>
+            </div>
+            <div class="col output-container">
+                <label id="result_lbl" for="result">Result: </label>
+                <p id="result"></p>
+            </div>
+        </main>
+    </body>
+</html>

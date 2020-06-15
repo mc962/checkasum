@@ -1,0 +1,32 @@
+{
+  "name": "checkasum",
+  "version": "0.1.1",
+  "description": "A small utility to verify the data integrity of a downloaded file with its expected checksum.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && electron ./dist/main/primary.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mc962/checkasum.git"
+  },
+  "keywords": [
+    "checksum",
+    "hashing"
+  ],
+  "author": "mc962 <11969409+mc962@users.noreply.github.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mc962/checkasum/issues"
+  },
+  "homepage": "https://github.com/mc962/checkasum#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.2.0",
+    "@typescript-eslint/parser": "^3.2.0",
+    "electron": "^9.0.4",
+    "eslint": "^7.2.0",
+    "typescript": "^3.9.5"
+  },
+  "dependencies": {}
+}
