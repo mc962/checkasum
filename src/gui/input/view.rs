@@ -19,7 +19,10 @@ impl Template for InputView {
                             TextBlock::create().text("File Path").build(ctx)
                         )
                         .child(
-                            TextBox::create().water_mark("Enter file path...").build(ctx)
+                            TextBox::create()
+                                .id("file_path_text_box")
+                                .water_mark("Enter file path...")
+                                .build(ctx)
                         )
                         .build(ctx)
                 ).child(
@@ -29,7 +32,10 @@ impl Template for InputView {
                             TextBlock::create().text("Checksum").build(ctx)
                         )
                         .child(
-                            TextBox::create().water_mark("Enter checksum...").build(ctx)
+                            TextBox::create()
+                                .id("checksum_text_box")
+                                .water_mark("Enter checksum...")
+                                .build(ctx)
                         )
                         .build(ctx)
                 ).build(ctx)
