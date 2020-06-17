@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && electron ./dist/main/primary.js"
+    "build": "tsc",
+    "run": "electron ./dist/main/primary.js"
   },
   "repository": {
     "type": "git",

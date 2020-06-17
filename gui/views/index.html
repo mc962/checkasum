@@ -14,23 +14,29 @@
         <header class="heading-container">
             <h1>Checkasum</h1>
         </header>
-        <main>
+        <main class="application">
             <div class="col input-container">
                 <div class="file_path_container">
-                    <label id="file_path_lbl" for="file_path">File Path: </label>
-                    <input type="text" id="file_path" name="file_path" />
+                    <label id="file_path_lbl" class="item-heading" for="file_path">File Path: </label>
+                    <input type="text" id="file_path" name="file_path" class="control" />
                 </div>
                 <div class="checksum_container">
-                    <label id="checksum_text_lbl" for="checksum_text">Checksum: </label>
-                    <textarea id="checksum_text" name="checksum_text"></textarea>
+                    <label id="checksum_text_lbl" class="item-heading" for="checksum_text">Checksum: </label>
+                    <textarea id="checksum_text" name="checksum_text" class="control"></textarea>
                 </div>
             </div>
             <div class="col calculate-container">
-                <button type="button" id="calculate_btn">Check</button>
+                <button type="button" id="calculate_btn">Check File</button>
+                    <div class="errors-container hidden">
+                    <label for="errors_list" class="item-heading">Errors: </label>
+                    <ul id="errors_list"></ul>
+                </div>
             </div>
             <div class="col output-container">
-                <label id="result_lbl" for="result">Result: </label>
-                <p id="result"></p>
+                <label id="result_lbl" class="item-heading" for="results">Results: </label>
+                <div id="results" class="hidden">
+                    <p id="result_status"></p>
+                </div>
             </div>
         </main>
     </body>

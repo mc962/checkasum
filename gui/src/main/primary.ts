@@ -1,12 +1,13 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import {app, BrowserWindow, ipcMain} from 'electron';
+import { HashingError, Payload, Result, Status } from "../interfaces";
 
 let mainWindow: BrowserWindow | null = null;
 
 const createWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 600,
-        height: 400,
+        width: 0.5,
+        height: 0.5,
         webPreferences: {
             nodeIntegration: true,
             devTools: true,
@@ -48,8 +49,38 @@ app.on('activate', () => {
     }
 });
 
-ipcMain.on('checkFile', (event, data) => {
+ipcMain.on('checkFile', (event, payloadData: Payload) => {
+    const payload = Payload.parse(payloadData);
     // placeholder
-    console.log(data);
-    event.sender.send('hashingReply', data);
+    let resultData;
+
+    if (payload.isPresent()) {
+        console.log(payload);
+        resultData = {
+            status: Status.Failure,
+            filePath: payload.filePath,
+            checksum: payload.checksum,
+        }
+        // end placeholder
+    } else {
+        resultData = {
+            status: Status.Failure,
+            filePath: payload.filePath,
+            checksum: payload.checksum,
+            errors: [
+                {
+                    message: `Required attributes were missing`
+                }
+            ]
+        }
+    }
+
+    const response: Result = {
+        status: resultData.status,
+        filePath: resultData.filePath,
+        checksum: resultData.checksum,
+        errors: resultData.errors
+    }
+
+    event.sender.send('hashingReply', response);
 });
