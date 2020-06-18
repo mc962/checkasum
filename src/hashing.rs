@@ -37,15 +37,10 @@ pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
 /// Bubbles up errors from file_reader
 /// Bubbles up errors from attempting file hashing
 pub fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
-    let reader = file_reader(path);
+    let reader = file_reader(path)?;
 
-    match reader {
-        Ok(reader) => {
-            match hashing_method {
-                HashAlgorithm::SHA256 => Ok(hash_sha256(reader))
-            }
-        },
-        Err(reason) => Err(reason)
+    match hashing_method {
+        HashAlgorithm::SHA256 => Ok(hash_sha256(reader))
     }
 }
 
@@ -100,10 +95,7 @@ fn hash_sha256<R: Read>(mut reader: R) -> String {
 /// let reader = file_reader("/bob/unknown/file/path");
 /// ```
 fn file_reader(path: &Path) -> Result<BufReader<File>, Error> {
-    let in_file = File::open(path);
+    let in_file = File::open(path)?;
 
-    match in_file {
-        Ok(file) => Ok(BufReader::new(file)),
-        Err(reason) => Err(reason)
-    }
+    Ok(BufReader::new(in_file))
 }
