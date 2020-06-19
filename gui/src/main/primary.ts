@@ -84,13 +84,3 @@ ipcMain.on('checkFile', (event, payloadData: Payload) => {
 
     event.sender.send('hashingReply', response);
 });
-
-import * as fs from 'fs';
-const data = fs.readFileSync('/home/michael/programming/rust/checkasum/target/wasm32-unknown-unknown/debug/checkasum.wasm');
-WebAssembly.compile(data).then(mod => {
-    console.log('compiled', mod)
-    // @ts-ignore
-    console.log(mod.hash_matches)
-}).catch(err => {
-    console.error('error', err)
-});

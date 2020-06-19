@@ -18,8 +18,6 @@ pub enum HashAlgorithm {
 ///
 /// hash_matches("abcd", "abcd");
 /// ```
-#[no_mangle]
-#[link(wasm_import_module = "mod")]
 pub extern fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
     file_hash == correct_hash
 }
@@ -38,8 +36,6 @@ pub extern fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
 ///
 /// Bubbles up errors from file_reader
 /// Bubbles up errors from attempting file hashing
-#[no_mangle]
-#[link(wasm_import_module = "mod")]
 pub extern fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
     let reader = file_reader(path)?;
 
@@ -122,8 +118,6 @@ fn file_reader(path: &Path) -> Result<BufReader<File>, Error> {
 ///
 /// algorithm_type("shaw256");
 /// ```
-#[no_mangle]
-#[link(wasm_import_module = "mod")]
 pub extern fn algorithm_type(method: &str) -> Result<HashAlgorithm, String> {
     Ok(match method {
         "sha256" => HashAlgorithm::SHA256,
