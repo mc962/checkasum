@@ -3,10 +3,10 @@ use std::process::exit;
 use structopt::StructOpt;
 
 pub mod hashing;
-use hashing::{hash_file, hash_matches};
+use hashing::{hash_file, hash_matches, algorithm_type};
 
 mod cli;
-use cli::{Options, algorithm_type};
+use cli::Options;
 
 fn main() {
     let args = Options::from_args();

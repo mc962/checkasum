@@ -18,7 +18,9 @@ pub enum HashAlgorithm {
 ///
 /// hash_matches("abcd", "abcd");
 /// ```
-pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
+#[no_mangle]
+#[link(wasm_import_module = "mod")]
+pub extern fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
     file_hash == correct_hash
 }
 
@@ -36,7 +38,9 @@ pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
 ///
 /// Bubbles up errors from file_reader
 /// Bubbles up errors from attempting file hashing
-pub fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
+#[no_mangle]
+#[link(wasm_import_module = "mod")]
+pub extern fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
     let reader = file_reader(path)?;
 
     match hashing_method {
@@ -98,4 +102,31 @@ fn file_reader(path: &Path) -> Result<BufReader<File>, Error> {
     let in_file = File::open(path)?;
 
     Ok(BufReader::new(in_file))
+}
+
+/// Select algorithm type to use for hashing file, based on CLI input
+///
+/// # Examples
+///
+/// ```
+/// use algorithm_type;
+///
+/// algorithm_type("sha256");
+/// ```
+///
+/// # Errors
+///
+/// Handle unknown algorithm choices
+/// ```
+/// use algorithm_type;
+///
+/// algorithm_type("shaw256");
+/// ```
+#[no_mangle]
+#[link(wasm_import_module = "mod")]
+pub extern fn algorithm_type(method: &str) -> Result<HashAlgorithm, String> {
+    Ok(match method {
+        "sha256" => HashAlgorithm::SHA256,
+        err => return Err(format!("unknown action: {}", err))
+    })
 }
