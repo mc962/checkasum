@@ -3,6 +3,7 @@ name = "checkasum"
 version = "0.1.1"
 authors = ["mc962 <11969409+mc962@users.noreply.github.com>"]
 edition = "2018"
+exclude = ["artifacts.json", "index.node"]
 description = "A small utility to verify the data integrity of a downloaded file with its expected checksum."
 license = "MIT"
 repository = "https://github.com/mc962/checkasum"
@@ -10,10 +11,18 @@ homepage = "https://github.com/mc962/checkasum"
 keywords = ["checksum", "hashing"]
 readme = "README.md"
 
+[lib]
+name = "checkasum"
+crate-type = ["cdylib"]
+
 [dependencies]
 ring="0.16.4"
 data-encoding="2.2.1"
 structopt = "0.3.14"
+neon = "0.4.0"
+
+[build-dependencies]
+neon-build = "0.4.0"
 
 [profile.release]
 debug = true

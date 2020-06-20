@@ -18,7 +18,7 @@ pub enum HashAlgorithm {
 ///
 /// hash_matches("abcd", "abcd");
 /// ```
-pub extern fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
+pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
     file_hash == correct_hash
 }
 
@@ -36,7 +36,7 @@ pub extern fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
 ///
 /// Bubbles up errors from file_reader
 /// Bubbles up errors from attempting file hashing
-pub extern fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
+pub fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
     let reader = file_reader(path)?;
 
     match hashing_method {
@@ -118,9 +118,17 @@ fn file_reader(path: &Path) -> Result<BufReader<File>, Error> {
 ///
 /// algorithm_type("shaw256");
 /// ```
-pub extern fn algorithm_type(method: &str) -> Result<HashAlgorithm, String> {
+pub fn algorithm_type(method: &str) -> Result<HashAlgorithm, String> {
     Ok(match method {
         "sha256" => HashAlgorithm::SHA256,
         err => return Err(format!("unknown action: {}", err))
     })
+}
+
+pub fn check_file(method: &str, path: &str, expected: &str) -> Result<bool, Error> {
+    let algorithm = algorithm_type(method)?;
+    let hash_str = hash_file(algorithm, Path::new(path))?;
+    let matches_hash = hash_matches(&hash_str, expected)?;
+
+    matches_hash
 }

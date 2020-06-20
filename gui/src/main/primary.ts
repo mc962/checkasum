@@ -1,5 +1,8 @@
 import {app, BrowserWindow, ipcMain} from 'electron';
-import { HashingError, Payload, Result, Status } from "../interfaces";
+import { Payload, Result, Status } from "../interfaces";
+
+// import * as checkasum from '../../../native';
+const checkasum = require('../../../native');
 
 let mainWindow: BrowserWindow | null = null;
 
