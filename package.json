@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "install": "electron-build-env neon build",
     "compile": "tsc",
-    "run": "electron ./gui/dist/main/primary.js"
+    "build": "electron-build-env neon build --release",
+    "run": "electron ./gui/dist/main/primary.js",
+    "start": "electron ./gui/dist/main/primary.js"
   },
   "repository": {
     "type": "git",
