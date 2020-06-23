@@ -1,0 +1,1 @@
+export function checkFile(method: string, path: string, expected: string): boolean;

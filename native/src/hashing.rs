@@ -4,6 +4,8 @@ use std::fs::File;
 use std::io::{BufReader, Read, Error};
 use std::path::Path;
 
+use crate::error::OptionError;
+
 /// Allowed hashing algorithms
 pub enum HashAlgorithm {
     SHA256
@@ -18,7 +20,7 @@ pub enum HashAlgorithm {
 ///
 /// hash_matches("abcd", "abcd");
 /// ```
-pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
+pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool {
     file_hash == correct_hash
 }
 
@@ -118,17 +120,17 @@ fn file_reader(path: &Path) -> Result<BufReader<File>, Error> {
 ///
 /// algorithm_type("shaw256");
 /// ```
-pub fn algorithm_type(method: &str) -> Result<HashAlgorithm, String> {
-    Ok(match method {
-        "sha256" => HashAlgorithm::SHA256,
-        err => return Err(format!("unknown action: {}", err))
-    })
+pub fn algorithm_type(method: &str) -> Result<HashAlgorithm, OptionError> {
+    match method {
+        "sha256" => Ok(HashAlgorithm::SHA256),
+        err => Err(OptionError::new(format!("unknown action: {}", err)))
+    }
 }
 
 pub fn check_file(method: &str, path: &str, expected: &str) -> Result<bool, Error> {
     let algorithm = algorithm_type(method)?;
     let hash_str = hash_file(algorithm, Path::new(path))?;
-    let matches_hash = hash_matches(&hash_str, expected)?;
+    let matches_hash = hash_matches(&hash_str, expected);
 
-    matches_hash
+    Ok(matches_hash)
 }

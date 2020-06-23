@@ -1,8 +1,7 @@
 import {app, BrowserWindow, ipcMain} from 'electron';
 import { Payload, Result, Status } from "../interfaces";
 
-// import * as checkasum from '../../../native';
-const checkasum = require('../../../native');
+const native = require('./native');
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -54,17 +53,35 @@ app.on('activate', () => {
 
 ipcMain.on('checkFile', (event, payloadData: Payload) => {
     const payload = Payload.parse(payloadData);
-    // placeholder
     let resultData;
 
     if (payload.isPresent()) {
         console.log(payload);
+        let nativeStatus;
+        let nativeErrors: Array<any>;
+
+        try {
+            const nativeResult = native.checkFile('sha256', payload.filePath, payload.checksum)
+
+            if (nativeResult) {
+                nativeStatus = Status.Success;
+            } else {
+                nativeStatus = Status.Failure
+            }
+
+            nativeErrors = [];
+        } catch (err) {
+            console.error(err);
+            nativeErrors = [];
+            nativeStatus = Status.Failure;
+        }
+
         resultData = {
-            status: Status.Failure,
+            status: nativeStatus,
             filePath: payload.filePath,
             checksum: payload.checksum,
+            errors: nativeErrors
         }
-        // end placeholder
     } else {
         resultData = {
             status: Status.Failure,

@@ -22,20 +22,19 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 const calculateListener = () => {
-    const calculateBtn = document.getElementById('calculate_btn');
-    if (calculateBtn) {
-        calculateBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            const payload = getInputData();
+    const calculateBtn = document.getElementById('calculate_btn') as HTMLButtonElement;
+    calculateBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        calculateBtn.disabled = true
+        const payload = getInputData();
 
-            ipcRenderer.once('hashingReply', (_event, response: Result) => {
-                processResponse(response);
-            });
+        ipcRenderer.once('hashingReply', (_event, response: Result) => {
+            processResponse(response);
+            calculateBtn.disabled = false;
+        });
 
-            ipcRenderer.send('checkFile', payload)
-        })
-    }
-
+        ipcRenderer.send('checkFile', payload)
+    })
 }
 
 const processResponse = (response: Result) => {
@@ -56,7 +55,8 @@ const processResponse = (response: Result) => {
     }
 
     handleErrors(response.errors)
-    handleResultStatus(message, resultClass, !!response.errors)
+    const errorsPresent = !!(response.errors && response.errors.length);
+    handleResultStatus(message, resultClass, errorsPresent)
 }
 
 const handleResultStatus: (message: string, className: string, errorsPresent: boolean) => void = (message, className, errorsPresent) => {
@@ -81,7 +81,7 @@ const handleErrors: (errors: Array<HashingError> | undefined) => void = (errors)
 
     errorsList.textContent = '';
 
-    if (errors) {
+    if (errors && errors.length) {
         showErrors(errorsList, errorsContainer, errors)
     } else {
         hideErrors(errorsList, errorsContainer)

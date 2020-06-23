@@ -5,8 +5,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "neon build",
-    "build": "tsc",
+    "install": "electron-build-env neon build",
+    "compile": "tsc",
     "run": "electron ./gui/dist/main/primary.js"
   },
   "repository": {
@@ -27,6 +27,7 @@
     "@typescript-eslint/eslint-plugin": "^3.2.0",
     "@typescript-eslint/parser": "^3.2.0",
     "electron": "^9.0.4",
+    "electron-build-env": "^0.2.0",
     "eslint": "^7.2.0",
     "neon-cli": "^0.4.0",
     "typescript": "^3.9.5"

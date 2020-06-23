@@ -25,7 +25,7 @@ export class Payload {
 
 export enum Status {
     Success,
-    Failure,
+    Failure
 }
 
 export interface Result {

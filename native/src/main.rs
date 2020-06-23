@@ -8,6 +8,8 @@ use hashing::{hash_file, hash_matches, algorithm_type};
 mod cli;
 use cli::Options;
 
+pub mod error;
+
 fn main() {
     let args = Options::from_args();
     let algorithm = match algorithm_type(&args.method) {
