@@ -1,5 +1,6 @@
 import {app, BrowserWindow, ipcMain} from 'electron';
 import { Payload, Result, Status } from "../interfaces";
+import * as path from "path";
 
 const native = require('./native');
 
@@ -8,11 +9,13 @@ let mainWindow: BrowserWindow | null = null;
 const createWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
+        title: 'Checkasum',
+        icon: path.join(__dirname, '..', '..', 'images', 'icon.png'),
         width: 0.5,
         height: 0.5,
         webPreferences: {
             nodeIntegration: true,
-            devTools: true,
+            devTools: !!process.env.DEBUG,
         },
         show: false
     });
