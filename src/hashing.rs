@@ -1,12 +1,14 @@
 use data_encoding::HEXLOWER;
 use ring::digest::{Context, SHA256};
 use std::fs::File;
-use std::io::{BufReader, Read, Error};
+use std::io::{BufReader, Error, Read};
 use std::path::Path;
+
+use crate::error::OptionError;
 
 /// Allowed hashing algorithms
 pub enum HashAlgorithm {
-    SHA256
+    SHA256,
 }
 
 /// Checks if hash generated from file matches the documented expected hash
@@ -18,7 +20,7 @@ pub enum HashAlgorithm {
 ///
 /// hash_matches("abcd", "abcd");
 /// ```
-pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
+pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool {
     file_hash == correct_hash
 }
 
@@ -37,15 +39,10 @@ pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool{
 /// Bubbles up errors from file_reader
 /// Bubbles up errors from attempting file hashing
 pub fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
-    let reader = file_reader(path);
+    let reader = file_reader(path)?;
 
-    match reader {
-        Ok(reader) => {
-            match hashing_method {
-                HashAlgorithm::SHA256 => Ok(hash_sha256(reader))
-            }
-        },
-        Err(reason) => Err(reason)
+    match hashing_method {
+        HashAlgorithm::SHA256 => Ok(hash_sha256(reader)),
     }
 }
 
@@ -74,8 +71,11 @@ fn hash_sha256<R: Read>(mut reader: R) -> String {
                     break;
                 }
                 context.update(&buffer[..count])
-            },
-            Err(_reason) => println!("couldn't read file contents into buffer"),
+            }
+            Err(reason) => {
+                println!("Problem hashing file contents: {}", reason);
+                break;
+            }
         }
     }
 
@@ -100,10 +100,32 @@ fn hash_sha256<R: Read>(mut reader: R) -> String {
 /// let reader = file_reader("/bob/unknown/file/path");
 /// ```
 fn file_reader(path: &Path) -> Result<BufReader<File>, Error> {
-    let in_file = File::open(path);
+    let in_file = File::open(path)?;
 
-    match in_file {
-        Ok(file) => Ok(BufReader::new(file)),
-        Err(reason) => Err(reason)
+    Ok(BufReader::new(in_file))
+}
+
+/// Select algorithm type to use for hashing file, based on CLI input
+///
+/// # Examples
+///
+/// ```
+/// use algorithm_type;
+///
+/// algorithm_type("sha256");
+/// ```
+///
+/// # Errors
+///
+/// Handle unknown algorithm choices
+/// ```
+/// use algorithm_type;
+///
+/// algorithm_type("shaw256");
+/// ```
+pub fn algorithm_type(method: &str) -> Result<HashAlgorithm, OptionError> {
+    match method {
+        "sha256" => Ok(HashAlgorithm::SHA256),
+        err => Err(OptionError::new(format!("unknown action: {}", err))),
     }
 }

@@ -10,6 +10,9 @@ homepage = "https://github.com/mc962/checkasum"
 keywords = ["checksum", "hashing"]
 readme = "README.md"
 
+[lib]
+name = "checkasum"
+
 [dependencies]
 ring="0.16.4"
 data-encoding="2.2.1"

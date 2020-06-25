@@ -3,10 +3,12 @@ use std::process::exit;
 use structopt::StructOpt;
 
 pub mod hashing;
-use hashing::{hash_file, hash_matches};
+use hashing::{algorithm_type, hash_file, hash_matches};
 
 mod cli;
-use cli::{Options, algorithm_type};
+use cli::Options;
+
+mod error;
 
 fn main() {
     let args = Options::from_args();
@@ -23,12 +25,12 @@ fn main() {
         Ok(hash) => {
             println!("{}   {}", hash, args.path.display());
             if hash_matches(&hash, &args.expected) {
-                println!("SUCCESS: file hash matches expected checksum hash!")
+                println!("SUCCESS: File hash matches expected checksum hash!")
             } else {
                 println!("WARNING: File hash does not match expected checksum hash!");
                 println!("Expected: {} | Actual: {}", args.expected, hash);
             }
-        },
+        }
         Err(reason) => {
             println!("Problem hashing file: {}", reason);
             exit(1);
