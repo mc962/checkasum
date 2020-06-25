@@ -1,19 +1,79 @@
 {
   "name": "checkasum",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "description": "A small utility to verify the data integrity of a downloaded file with its expected checksum.",
-  "main": "main.js",
+  "main": "gui/dist/main/primary.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "electron-build-env neon build",
-    "compile": "tsc",
     "build": "electron-build-env neon build --release",
+    "build-release": "neon build --release",
+    "install": "node-pre-gyp install --fallback-to-build=false || neon build",
+    "package": "node-pre-gyp package",
+    "upload-binary": "node-pre-gyp package && node-pre-gyp-github publish",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc",
     "run": "electron ./gui/dist/main/primary.js",
-    "start": "electron ./gui/dist/main/primary.js"
+    "start": "electron ./gui/dist/main/primary.js",
+    "dist": "electron-builder",
+    "pack": "electron-builder --dir",
+    "postinstall": "install-app-deps"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mc962/checkasum.git"
+  },
+  "files": [
+    "native/index.node",
+    "gui"
+  ],
+  "binary": {
+    "module_name": "index",
+    "host": "https://github.com/mc962/checkasum/releases/download/",
+    "remote_path": "{version}",
+    "package_name": "{node_abi}-{platform}-{arch}.tar.gz",
+    "module_path": "./native",
+    "pkg_path": "."
+  },
+  "build": {
+    "appId": "checkasum",
+    "directories": {
+      "output": "build"
+    },
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "executableName": "Checkasum",
+      "icon": "build/icon.png",
+      "mimeTypes": ["application/octet-stream"],
+      "desktop": {
+        "name": "Checkasum",
+        "icon": "build/icon.png",
+        "comment": "File-hashing utility"
+      },
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm"
+      ]
+    },
+    "win": {
+      "target": "squirrel",
+      "icon": "build/icon.ico"
+    }
   },
   "keywords": [
     "checksum",
@@ -28,10 +88,13 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^3.2.0",
     "@typescript-eslint/parser": "^3.2.0",
-    "electron": "^9.0.4",
+    "electron": "^9.0.5",
     "electron-build-env": "^0.2.0",
+    "electron-builder": "^22.7.0",
     "eslint": "^7.2.0",
     "neon-cli": "^0.4.0",
+    "node-pre-gyp": "^0.15.0",
+    "node-pre-gyp-github": "^1.4.3",
     "typescript": "^3.9.5"
   },
   "dependencies": {}
