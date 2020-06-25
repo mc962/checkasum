@@ -6,7 +6,7 @@
   "scripts": {
     "build": "electron-build-env neon build --release",
     "build-release": "neon build --release",
-    "install": "node-pre-gyp install --fallback-to-build=false || neon build",
+    "install": "node-pre-gyp install --fallback-to-build=false || neon build --release",
     "package": "node-pre-gyp package",
     "upload-binary": "node-pre-gyp package && node-pre-gyp-github publish",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,7 +15,8 @@
     "start": "electron ./gui/dist/main/primary.js",
     "dist": "electron-builder",
     "pack": "electron-builder --dir",
-    "postinstall": "install-app-deps"
+    "postinstall": "install-app-deps",
+    "rebuild": "electron-rebuild -f -w native/index.node"
   },
   "repository": {
     "type": "git",
@@ -58,15 +59,15 @@
     "linux": {
       "executableName": "Checkasum",
       "icon": "build/icon.png",
-      "mimeTypes": ["application/octet-stream"],
+      "mimeTypes": [
+        "application/octet-stream"
+      ],
       "desktop": {
         "name": "Checkasum",
         "icon": "build/icon.png",
         "comment": "File-hashing utility"
       },
       "target": [
-        "AppImage",
-        "deb",
         "rpm"
       ]
     },
@@ -91,11 +92,15 @@
     "electron": "^9.0.5",
     "electron-build-env": "^0.2.0",
     "electron-builder": "^22.7.0",
+    "electron-installer-redhat": "^3.0.0",
+    "electron-packager": "^14.2.1",
+    "electron-rebuild": "^1.11.0",
     "eslint": "^7.2.0",
     "neon-cli": "^0.4.0",
-    "node-pre-gyp": "^0.15.0",
     "node-pre-gyp-github": "^1.4.3",
     "typescript": "^3.9.5"
   },
-  "dependencies": {}
+  "dependencies": {
+    "node-pre-gyp": "github:amilajack/node-pre-gyp#neon-compat"
+  }
 }
