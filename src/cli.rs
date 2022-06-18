@@ -5,7 +5,7 @@ use structopt::StructOpt;
 #[structopt(name = "Checkasum")]
 pub struct Options {
     /// type of hashing algorithm to perform on file at inputted path
-    #[structopt(short="m", long="method", possible_values=&["sha256"])]
+    #[structopt(short="m", long="method", possible_values=&["sha256", "md5"])]
     pub method: String,
     /// path to a local file to attempt to perform hashing on
     #[structopt(short="p", long="path", parse(from_os_str))]

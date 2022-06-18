@@ -1,3 +1,5 @@
+extern crate core;
+
 use std::process::exit;
 // StructOpt import is required here for using its from_args method with Options
 use structopt::StructOpt;
