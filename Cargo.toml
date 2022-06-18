@@ -1,6 +1,6 @@
 [package]
 name = "checkasum"
-version = "1.1.1"
+version = "1.2.0"
 authors = ["mc962 <11969409+mc962@users.noreply.github.com>"]
 edition = "2018"
 description = "A small utility to verify the data integrity of a downloaded file with its expected checksum."
@@ -12,6 +12,11 @@ readme = "README.md"
 
 [lib]
 name = "checkasum"
+path = "src/lib.rs"
+
+[[bin]]
+name = "checkasum"
+path = "src/main.rs"
 
 [dependencies]
 ring="0.16.20"
