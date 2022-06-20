@@ -3,3 +3,4 @@
 .vscode/
 tests/fixtures/tmp/*
 !tests/fixtures/tmp/README.md
+.DS_Store
