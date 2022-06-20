@@ -1,9 +1,9 @@
 extern crate core;
 
 use std::process::exit;
-// StructOpt import is required here for using its from_args method with Options
 use checkasum::check_file_path;
-use structopt::StructOpt;
+// StructOpt import is required here for using its from_args method with Options
+use clap::StructOpt;
 
 pub mod hashing;
 
@@ -28,6 +28,9 @@ fn main() {
                     "Expected: {} | Actual: {}",
                     success_result.expected_digest, &actual_digest
                 );
+                println!(
+                    "Error: {}", success_result.message.unwrap_or("".to_string())
+                )
             }
         }
         Err(error_result) => {

@@ -1,6 +1,6 @@
 [package]
 name = "checkasum"
-version = "2.1.0"
+version = "2.2.0"
 authors = ["mc962 <11969409+mc962@users.noreply.github.com>"]
 edition = "2018"
 description = "A small utility to verify the data integrity of a downloaded file with its expected checksum."
@@ -22,5 +22,5 @@ path = "src/main.rs"
 data-encoding="2.3.2"
 sha2 = "0.10.2"
 md-5 = "0.10.1"
-structopt = "0.3.22"
+clap = { version = "3.0", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
