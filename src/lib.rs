@@ -20,6 +20,7 @@ pub struct ChecksumResult {
     pub message: Option<String>,
 }
 
+/// Processes String created after hashing file into a result struct expected by external users
 fn process_result(method: &HashAlgorithm, expected: &str, hash_str: Result<String, Error>) -> ChecksumResult {
     let result = match hash_str {
         Ok(hash) => {
