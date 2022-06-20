@@ -45,7 +45,7 @@ pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool {
 /// use checkasum::hashing::hash_file_path;
 /// use checkasum::hashing::HashAlgorithm::SHA256;
 ///
-/// let _file_hash = hash_file_path(SHA256, "/bob/path/to/file.iso".as_ref());
+/// let _file_hash = hash_file_path(&SHA256, "/bob/path/to/file.iso".as_ref());
 /// ```
 ///
 /// # Errors

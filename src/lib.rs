@@ -77,10 +77,16 @@ pub fn check_file_path(
     path: &PathBuf,
     expected: &str,
 ) -> Result<ChecksumResult, ChecksumResult> {
-    let algorithm = match algorithm_type(method) {
-        Ok(algorithm) => algorithm,
+    return match algorithm_type(method) {
+        Ok(algorithm) => {
+            let hash_str = hash_file_path(&algorithm, path);
+
+            let result = process_result(&algorithm, expected, hash_str);
+
+            Ok(result)
+        },
         Err(reason) => {
-            return Ok(ChecksumResult {
+            Ok(ChecksumResult {
                 expected_digest: expected.to_string(),
                 actual_digest: None,
                 hashing_algorithm: method.to_string(),
@@ -88,13 +94,7 @@ pub fn check_file_path(
                 message: Some(reason.to_string()),
             })
         }
-    };
-
-    let hash_str = hash_file_path(&algorithm, path);
-
-    let result = process_result(&algorithm, expected, hash_str);
-
-    return Ok(result);
+    }
 }
 
 /// Checks uploaded file, comparing against an expected checksum digest, using a particular
@@ -117,10 +117,16 @@ pub fn check_file(
     infile: &mut File,
     expected: &str,
 ) -> Result<ChecksumResult, ChecksumResult> {
-    let algorithm = match algorithm_type(method) {
-        Ok(algorithm) => algorithm,
+    return match algorithm_type(method) {
+        Ok(algorithm) => {
+            let hash_str = hash_file(&algorithm, infile);
+
+            let result = process_result(&algorithm, expected, hash_str);
+
+            Ok(result)
+        },
         Err(reason) => {
-            return Ok(ChecksumResult {
+            Ok(ChecksumResult {
                 expected_digest: expected.to_string(),
                 actual_digest: None,
                 hashing_algorithm: method.to_string(),
@@ -130,9 +136,5 @@ pub fn check_file(
         }
     };
 
-    let hash_str = hash_file(&algorithm, infile);
 
-    let result = process_result(&algorithm, expected, hash_str);
-
-    return Ok(result);
 }
