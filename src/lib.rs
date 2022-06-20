@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 pub mod hashing;
 use hashing::{algorithm_type, hash_file, hash_matches};
@@ -14,7 +14,7 @@ pub struct ChecksumResult {
     pub actual_digest: Option<String>,
     pub hashing_algorithm: String,
     pub successful: bool,
-    pub message: Option<String>
+    pub message: Option<String>,
 }
 
 /// Checks file at given path, comparing against an expected checksum digest, using a particular
@@ -36,18 +36,20 @@ pub struct ChecksumResult {
 ///
 /// let _result = check_file_path("sha256", &sample_file_path, &"test_digest".to_string());
 /// ```
-pub fn check_file_path(method: &str, path: &PathBuf, expected: &str) -> Result<ChecksumResult, ChecksumResult> {
+pub fn check_file_path(
+    method: &str,
+    path: &PathBuf,
+    expected: &str,
+) -> Result<ChecksumResult, ChecksumResult> {
     let algorithm = match algorithm_type(method) {
-        Ok(algorithm) => {
-            algorithm
-        }
+        Ok(algorithm) => algorithm,
         Err(reason) => {
-            return Ok(ChecksumResult{
+            return Ok(ChecksumResult {
                 expected_digest: expected.to_string(),
                 actual_digest: None,
                 hashing_algorithm: method.to_string(),
                 successful: false,
-                message: Some(reason.to_string())
+                message: Some(reason.to_string()),
             })
         }
     };
@@ -56,33 +58,31 @@ pub fn check_file_path(method: &str, path: &PathBuf, expected: &str) -> Result<C
     let result = match hash_str {
         Ok(hash) => {
             if hash_matches(&hash, expected) {
-                ChecksumResult{
+                ChecksumResult {
                     expected_digest: expected.to_string(),
                     actual_digest: Some(hash.to_string()),
                     hashing_algorithm: method.to_string(),
                     successful: true,
-                    message: None
+                    message: None,
                 }
             } else {
-                ChecksumResult{
+                ChecksumResult {
                     expected_digest: expected.to_string(),
                     actual_digest: Some(hash.to_string()),
                     hashing_algorithm: method.to_string(),
                     successful: false,
-                    message: None
+                    message: None,
                 }
             }
         }
-        Err(reason) => {
-            ChecksumResult{
-                expected_digest: expected.to_string(),
-                actual_digest: None,
-                hashing_algorithm: method.to_string(),
-                successful: false,
-                message: Some(reason.to_string())
-            }
-        }
+        Err(reason) => ChecksumResult {
+            expected_digest: expected.to_string(),
+            actual_digest: None,
+            hashing_algorithm: method.to_string(),
+            successful: false,
+            message: Some(reason.to_string()),
+        },
     };
 
-    return Ok(result)
+    return Ok(result);
 }

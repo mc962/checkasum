@@ -2,8 +2,8 @@ extern crate core;
 
 use std::process::exit;
 // StructOpt import is required here for using its from_args method with Options
-use structopt::StructOpt;
 use checkasum::check_file_path;
+use structopt::StructOpt;
 
 pub mod hashing;
 
@@ -14,11 +14,7 @@ mod error;
 
 fn main() {
     let args = Options::from_args();
-    let result = check_file_path(
-        &args.method,
-        &args.path,
-        &args.expected
-    );
+    let result = check_file_path(&args.method, &args.path, &args.expected);
 
     match result {
         Ok(success_result) => {
@@ -28,11 +24,17 @@ fn main() {
                 println!("SUCCESS: File hash matches expected checksum hash!")
             } else {
                 println!("WARNING: File hash does not match expected checksum hash!");
-                println!("Expected: {} | Actual: {}", success_result.expected_digest, &actual_digest);
+                println!(
+                    "Expected: {} | Actual: {}",
+                    success_result.expected_digest, &actual_digest
+                );
             }
         }
         Err(error_result) => {
-            println!("Problem hashing file: {}", error_result.message.unwrap_or("Unknown error".to_string()));
+            println!(
+                "Problem hashing file: {}",
+                error_result.message.unwrap_or("Unknown error".to_string())
+            );
             exit(1);
         }
     }

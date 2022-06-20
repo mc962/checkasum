@@ -1,18 +1,16 @@
 use std::error;
-use std::io;
 use std::fmt;
+use std::io;
 
 /// Raised when incorrect option is given during normal runtime
 #[derive(Debug)]
 pub struct OptionError {
-    details: String
+    details: String,
 }
 
 impl OptionError {
     pub fn new(msg: String) -> OptionError {
-        OptionError {
-            details: msg
-        }
+        OptionError { details: msg }
     }
 }
 

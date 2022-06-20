@@ -1,17 +1,17 @@
-use std::{io};
 use data_encoding::HEXLOWER;
-use std::fs::File;
-use std::io::{Error};
-use std::path::Path;
 use md5::Md5;
-use sha2::{Sha256, Digest};
+use sha2::{Digest, Sha256};
+use std::fs::File;
+use std::io;
+use std::io::Error;
+use std::path::Path;
 
 use crate::error::OptionError;
 
 /// Allowed hashing algorithms
 pub enum HashAlgorithm {
     SHA256,
-    MD5
+    MD5,
 }
 
 /// Checks if hash generated from file matches the documented expected hash
@@ -45,7 +45,7 @@ pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool {
 pub fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
     match hashing_method {
         HashAlgorithm::SHA256 => hash_sha256(path),
-        HashAlgorithm::MD5 => hash_md5(path)
+        HashAlgorithm::MD5 => hash_md5(path),
     }
 }
 
