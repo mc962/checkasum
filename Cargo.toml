@@ -1,6 +1,6 @@
 [package]
 name = "checkasum"
-version = "1.2.0"
+version = "2.0.0"
 authors = ["mc962 <11969409+mc962@users.noreply.github.com>"]
 edition = "2018"
 description = "A small utility to verify the data integrity of a downloaded file with its expected checksum."
