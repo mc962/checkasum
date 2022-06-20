@@ -2,7 +2,7 @@ use data_encoding::HEXLOWER;
 use md5::Md5;
 use sha2::{Digest, Sha256};
 use std::fs::File;
-use std::io;
+use std::{fmt, io};
 use std::io::Error;
 use std::path::Path;
 
@@ -12,6 +12,16 @@ use crate::error::OptionError;
 pub enum HashAlgorithm {
     SHA256,
     MD5,
+}
+
+impl fmt::Display for HashAlgorithm {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // write!(f, "{}", self)
+        match self {
+            HashAlgorithm::SHA256 => f.write_str("sha256"),
+            HashAlgorithm::MD5 => f.write_str("md5")
+        }
+    }
 }
 
 /// Checks if hash generated from file matches the documented expected hash
@@ -42,7 +52,7 @@ pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool {
 ///
 /// Bubbles up errors from file_reader
 /// Bubbles up errors from attempting file hashing
-pub fn hash_file_path(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
+pub fn hash_file_path(hashing_method: &HashAlgorithm, path: &Path) -> Result<String, Error> {
     let mut file = File::open(&path)?;
 
     match hashing_method {
@@ -61,14 +71,14 @@ pub fn hash_file_path(hashing_method: HashAlgorithm, path: &Path) -> Result<Stri
 /// use checkasum::hashing::HashAlgorithm::SHA256;
 ///
 /// let mut file = File::create("tests/fixtures/tmp/foo.txt").unwrap();
-/// let _file_hash = hash_file(SHA256, &mut file);
+/// let _file_hash = hash_file(&SHA256, &mut file);
 /// ```
 ///
 /// # Errors
 ///
 /// Bubbles up errors from file_reader
 /// Bubbles up errors from attempting file hashing
-pub fn hash_file(hashing_method: HashAlgorithm, file: &mut File) -> Result<String, Error> {
+pub fn hash_file(hashing_method: &HashAlgorithm, file: &mut File) -> Result<String, Error> {
     match hashing_method {
         HashAlgorithm::SHA256 => hash_sha256(file),
         HashAlgorithm::MD5 => hash_md5(file),

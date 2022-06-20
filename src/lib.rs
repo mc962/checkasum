@@ -1,11 +1,12 @@
 use std::fs::File;
+use std::io::Error;
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
 pub mod hashing;
+use crate::hashing::{hash_file, HashAlgorithm};
 use hashing::{algorithm_type, hash_file_path, hash_matches};
-use crate::hashing::hash_file;
 
 pub mod error;
 
@@ -17,6 +18,39 @@ pub struct ChecksumResult {
     pub hashing_algorithm: String,
     pub successful: bool,
     pub message: Option<String>,
+}
+
+fn process_result(method: &HashAlgorithm, expected: &str, hash_str: Result<String, Error>) -> ChecksumResult {
+    let result = match hash_str {
+        Ok(hash) => {
+            if hash_matches(&hash, expected) {
+                ChecksumResult {
+                    expected_digest: expected.to_string(),
+                    actual_digest: Some(hash.to_string()),
+                    hashing_algorithm: method.to_string(),
+                    successful: true,
+                    message: None,
+                }
+            } else {
+                ChecksumResult {
+                    expected_digest: expected.to_string(),
+                    actual_digest: Some(hash.to_string()),
+                    hashing_algorithm: method.to_string(),
+                    successful: false,
+                    message: None,
+                }
+            }
+        }
+        Err(reason) => ChecksumResult {
+            expected_digest: expected.to_string(),
+            actual_digest: None,
+            hashing_algorithm: method.to_string(),
+            successful: false,
+            message: Some(reason.to_string()),
+        },
+    };
+
+    return result;
 }
 
 /// Checks file at given path, comparing against an expected checksum digest, using a particular
@@ -56,35 +90,9 @@ pub fn check_file_path(
         }
     };
 
-    let hash_str = hash_file_path(algorithm, path);
-    let result = match hash_str {
-        Ok(hash) => {
-            if hash_matches(&hash, expected) {
-                ChecksumResult {
-                    expected_digest: expected.to_string(),
-                    actual_digest: Some(hash.to_string()),
-                    hashing_algorithm: method.to_string(),
-                    successful: true,
-                    message: None,
-                }
-            } else {
-                ChecksumResult {
-                    expected_digest: expected.to_string(),
-                    actual_digest: Some(hash.to_string()),
-                    hashing_algorithm: method.to_string(),
-                    successful: false,
-                    message: None,
-                }
-            }
-        }
-        Err(reason) => ChecksumResult {
-            expected_digest: expected.to_string(),
-            actual_digest: None,
-            hashing_algorithm: method.to_string(),
-            successful: false,
-            message: Some(reason.to_string()),
-        },
-    };
+    let hash_str = hash_file_path(&algorithm, path);
+
+    let result = process_result(&algorithm, expected, hash_str);
 
     return Ok(result);
 }
@@ -122,36 +130,9 @@ pub fn check_file(
         }
     };
 
-    let hash_str = hash_file(algorithm, infile);
+    let hash_str = hash_file(&algorithm, infile);
 
-    let result = match hash_str {
-        Ok(hash) => {
-            if hash_matches(&hash, expected) {
-                ChecksumResult {
-                    expected_digest: expected.to_string(),
-                    actual_digest: Some(hash.to_string()),
-                    hashing_algorithm: method.to_string(),
-                    successful: true,
-                    message: None,
-                }
-            } else {
-                ChecksumResult {
-                    expected_digest: expected.to_string(),
-                    actual_digest: Some(hash.to_string()),
-                    hashing_algorithm: method.to_string(),
-                    successful: false,
-                    message: None,
-                }
-            }
-        }
-        Err(reason) => ChecksumResult {
-            expected_digest: expected.to_string(),
-            actual_digest: None,
-            hashing_algorithm: method.to_string(),
-            successful: false,
-            message: Some(reason.to_string()),
-        },
-    };
+    let result = process_result(&algorithm, expected, hash_str);
 
     return Ok(result);
 }
