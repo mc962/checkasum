@@ -2,6 +2,7 @@ use std::error;
 use std::io;
 use std::fmt;
 
+/// Raised when incorrect option is given during normal runtime
 #[derive(Debug)]
 pub struct OptionError {
     details: String

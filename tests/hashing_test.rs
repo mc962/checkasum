@@ -1,6 +1,6 @@
 use std::env;
 use std::path::PathBuf;
-use checkasum::check_file;
+use checkasum::check_file_path;
 
 struct Setup {
     valid_checksum: String,
@@ -26,7 +26,7 @@ impl Setup {
 #[test]
 fn valid_file_checksum_matches() {
     let setup = Setup::new();
-    let result = check_file(
+    let result = check_file_path(
         "sha256",
         &setup.sample_file_path,
         &setup.valid_checksum
@@ -40,7 +40,7 @@ fn valid_file_checksum_matches() {
 fn invalid_file_checksum_does_not_match() {
     let setup = Setup::new();
     let invalid_checksum = setup.valid_checksum + "-invalid";
-    let result = check_file(
+    let result = check_file_path(
         "sha256",
         &setup.sample_file_path,
         &invalid_checksum

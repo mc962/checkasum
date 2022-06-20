@@ -3,7 +3,7 @@ extern crate core;
 use std::process::exit;
 // StructOpt import is required here for using its from_args method with Options
 use structopt::StructOpt;
-use checkasum::check_file;
+use checkasum::check_file_path;
 
 pub mod hashing;
 
@@ -14,7 +14,7 @@ mod error;
 
 fn main() {
     let args = Options::from_args();
-    let result = check_file(
+    let result = check_file_path(
         &args.method,
         &args.path,
         &args.expected

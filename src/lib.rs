@@ -7,6 +7,7 @@ use hashing::{algorithm_type, hash_file, hash_matches};
 
 pub mod error;
 
+/// Results after hashing contents of a file
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ChecksumResult {
     pub expected_digest: String,
@@ -16,7 +17,26 @@ pub struct ChecksumResult {
     pub message: Option<String>
 }
 
-pub fn check_file(method: &str, path: &PathBuf, expected: &str) -> Result<ChecksumResult, ChecksumResult> {
+/// Checks file at given path, comparing against an expected checksum digest, using a particular
+/// matching hashing method.
+///
+/// # Examples
+///
+/// ```
+/// use std::env;
+/// use std::path::PathBuf;
+/// use checkasum::check_file_path;
+///
+/// let sample_file_path: PathBuf = [
+///             env::var("CARGO_MANIFEST_DIR").unwrap(),
+///             "tests".to_string(),
+///             "fixtures".to_string(),
+///             "sample.txt".to_string()
+///         ].iter().collect();
+///
+/// let _result = check_file_path("sha256", &sample_file_path, &"test_digest".to_string());
+/// ```
+pub fn check_file_path(method: &str, path: &PathBuf, expected: &str) -> Result<ChecksumResult, ChecksumResult> {
     let algorithm = match algorithm_type(method) {
         Ok(algorithm) => {
             algorithm
@@ -51,8 +71,6 @@ pub fn check_file(method: &str, path: &PathBuf, expected: &str) -> Result<Checks
                     successful: false,
                     message: None
                 }
-                // println!("WARNING: File hash does not match expected checksum hash!");
-                // println!("Expected: {} | Actual: {}", expected, hash);
             }
         }
         Err(reason) => {
