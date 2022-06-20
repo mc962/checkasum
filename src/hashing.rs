@@ -32,20 +32,46 @@ pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use checkasum::hashing::hash_file;
+/// use checkasum::hashing::hash_file_path;
 /// use checkasum::hashing::HashAlgorithm::SHA256;
 ///
-/// let _file_hash = hash_file(SHA256, "/bob/path/to/file.iso".as_ref());
+/// let _file_hash = hash_file_path(SHA256, "/bob/path/to/file.iso".as_ref());
 /// ```
 ///
 /// # Errors
 ///
 /// Bubbles up errors from file_reader
 /// Bubbles up errors from attempting file hashing
-pub fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
+pub fn hash_file_path(hashing_method: HashAlgorithm, path: &Path) -> Result<String, Error> {
+    let mut file = File::open(&path)?;
+
     match hashing_method {
-        HashAlgorithm::SHA256 => hash_sha256(path),
-        HashAlgorithm::MD5 => hash_md5(path),
+        HashAlgorithm::SHA256 => hash_sha256(&mut file),
+        HashAlgorithm::MD5 => hash_md5(&mut file),
+    }
+}
+
+/// Hashes a supplied file using the selected algorithm
+///
+/// # Examples
+///
+/// ```
+/// use std::fs::File;
+/// use checkasum::hashing::hash_file;
+/// use checkasum::hashing::HashAlgorithm::SHA256;
+///
+/// let mut file = File::create("tests/fixtures/tmp/foo.txt").unwrap();
+/// let _file_hash = hash_file(SHA256, &mut file);
+/// ```
+///
+/// # Errors
+///
+/// Bubbles up errors from file_reader
+/// Bubbles up errors from attempting file hashing
+pub fn hash_file(hashing_method: HashAlgorithm, file: &mut File) -> Result<String, Error> {
+    match hashing_method {
+        HashAlgorithm::SHA256 => hash_sha256(file),
+        HashAlgorithm::MD5 => hash_md5(file),
     }
 }
 
@@ -54,11 +80,10 @@ pub fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, E
 /// # Errors
 ///
 /// Reader may encounter potential I/O or other errors
-fn hash_sha256(path: &Path) -> Result<String, Error> {
-    let mut file = File::open(&path)?;
+fn hash_sha256(file: &mut File) -> Result<String, Error> {
     let mut hasher = Sha256::new();
 
-    let _data = io::copy(&mut file, &mut hasher)?;
+    let _data = io::copy(file, &mut hasher)?;
 
     let digest = hasher.finalize();
 
@@ -70,11 +95,10 @@ fn hash_sha256(path: &Path) -> Result<String, Error> {
 /// # Errors
 ///
 /// Reader may encounter potential I/O or other errors
-fn hash_md5(path: &Path) -> Result<String, Error> {
-    let mut file = File::open(&path)?;
+fn hash_md5(file: &mut File) -> Result<String, Error> {
     let mut hasher = Md5::new();
 
-    let _data = io::copy(&mut file, &mut hasher)?;
+    let _data = io::copy(file, &mut hasher)?;
     let digest = hasher.finalize();
 
     Ok(HEXLOWER.encode(digest.as_ref()))

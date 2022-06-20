@@ -1,9 +1,11 @@
+use std::fs::File;
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
 pub mod hashing;
-use hashing::{algorithm_type, hash_file, hash_matches};
+use hashing::{algorithm_type, hash_file_path, hash_matches};
+use crate::hashing::hash_file;
 
 pub mod error;
 
@@ -54,7 +56,74 @@ pub fn check_file_path(
         }
     };
 
-    let hash_str = hash_file(algorithm, path);
+    let hash_str = hash_file_path(algorithm, path);
+    let result = match hash_str {
+        Ok(hash) => {
+            if hash_matches(&hash, expected) {
+                ChecksumResult {
+                    expected_digest: expected.to_string(),
+                    actual_digest: Some(hash.to_string()),
+                    hashing_algorithm: method.to_string(),
+                    successful: true,
+                    message: None,
+                }
+            } else {
+                ChecksumResult {
+                    expected_digest: expected.to_string(),
+                    actual_digest: Some(hash.to_string()),
+                    hashing_algorithm: method.to_string(),
+                    successful: false,
+                    message: None,
+                }
+            }
+        }
+        Err(reason) => ChecksumResult {
+            expected_digest: expected.to_string(),
+            actual_digest: None,
+            hashing_algorithm: method.to_string(),
+            successful: false,
+            message: Some(reason.to_string()),
+        },
+    };
+
+    return Ok(result);
+}
+
+/// Checks uploaded file, comparing against an expected checksum digest, using a particular
+/// matching hashing method.
+///
+/// # Examples
+///
+/// ```
+/// use std::env;
+/// use std::fs::File;
+/// use std::path::PathBuf;
+/// use checkasum::check_file;
+///
+/// let mut file = File::create("tests/fixtures/tmp/foo.txt").unwrap();
+///
+/// let _result = check_file("sha256", &mut file, &"test_digest".to_string());
+/// ```
+pub fn check_file(
+    method: &str,
+    infile: &mut File,
+    expected: &str,
+) -> Result<ChecksumResult, ChecksumResult> {
+    let algorithm = match algorithm_type(method) {
+        Ok(algorithm) => algorithm,
+        Err(reason) => {
+            return Ok(ChecksumResult {
+                expected_digest: expected.to_string(),
+                actual_digest: None,
+                hashing_algorithm: method.to_string(),
+                successful: false,
+                message: Some(reason.to_string()),
+            })
+        }
+    };
+
+    let hash_str = hash_file(algorithm, infile);
+
     let result = match hash_str {
         Ok(hash) => {
             if hash_matches(&hash, expected) {
