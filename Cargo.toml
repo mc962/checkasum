@@ -23,3 +23,4 @@ data-encoding="2.3.2"
 sha2 = "0.10.2"
 md-5 = "0.10.1"
 structopt = "0.3.22"
+serde = { version = "1.0", features = ["derive"] }

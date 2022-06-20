@@ -19,7 +19,7 @@ pub enum HashAlgorithm {
 /// # Examples
 ///
 /// ```
-/// use hashing::hash_matches;
+/// use checkasum::hashing::hash_matches;
 ///
 /// hash_matches("abcd", "abcd");
 /// ```
@@ -32,9 +32,10 @@ pub fn hash_matches(file_hash: &str, correct_hash: &str) -> bool {
 /// # Examples
 ///
 /// ```
-/// use hashing::hash_file;
+/// use checkasum::hashing::hash_file;
+/// use checkasum::hashing::HashAlgorithm::SHA256;
 ///
-/// hash_file("sha256", "/bob/path/to/file.iso");
+/// let _file_hash = hash_file(SHA256, "/bob/path/to/file.iso".as_ref());
 /// ```
 ///
 /// # Errors
@@ -49,14 +50,6 @@ pub fn hash_file(hashing_method: HashAlgorithm, path: &Path) -> Result<String, E
 }
 
 /// Hashes a file with the SHA256 algorithm
-///
-/// # Examples
-///
-/// ```
-/// use hashing::{hash_sha256, file_reader};
-/// let reader = file_reader("/bob/path/to/file.iso");
-/// hash_sha256(reader);
-/// ```
 ///
 /// # Errors
 ///
@@ -73,14 +66,6 @@ fn hash_sha256(path: &Path) -> Result<String, Error> {
 }
 
 /// Hashes a file with the MD5 algorithm
-///
-/// # Examples
-///
-/// ```
-/// use hashing::{hash_md5, file_reader};
-/// let reader = file_reader("/bob/path/to/file.iso");
-/// hash_md5(reader);
-/// ```
 ///
 /// # Errors
 ///
@@ -100,18 +85,18 @@ fn hash_md5(path: &Path) -> Result<String, Error> {
 /// # Examples
 ///
 /// ```
-/// use algorithm_type;
+/// use checkasum::hashing::algorithm_type;
 ///
-/// algorithm_type("sha256");
+/// let _algorithm = algorithm_type("sha256");
 /// ```
 ///
 /// # Errors
 ///
 /// Handle unknown algorithm choices
 /// ```
-/// use algorithm_type;
+/// use checkasum::hashing::algorithm_type;
 ///
-/// algorithm_type("shaw256");
+/// let _algorithm = algorithm_type("shaw256");
 /// ```
 pub fn algorithm_type(method: &str) -> Result<HashAlgorithm, OptionError> {
     match method {
