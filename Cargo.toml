@@ -19,8 +19,8 @@ name = "checkasum"
 path = "src/main.rs"
 
 [dependencies]
-data-encoding="2.3.2"
-sha2 = "0.10.2"
-md-5 = "0.10.1"
-clap = { version = "3.0", features = ["derive"] }
+data-encoding="2.5.0"
+sha2 = "0.10.8"
+md-5 = "0.10.6"
+clap = { version = "4.5.4", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
