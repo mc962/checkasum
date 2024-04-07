@@ -1,3 +1,4 @@
+use checkasum::hashing::HashAlgorithm::SHA256;
 use checkasum::{check_file, check_file_path};
 use std::env;
 use std::fs::File;
@@ -30,7 +31,7 @@ impl Setup {
 #[test]
 fn valid_file_path_checksum_matches() {
     let setup = Setup::new();
-    let result = check_file_path("sha256", &setup.sample_file_path, &setup.valid_checksum).unwrap();
+    let result = check_file_path(&SHA256, &setup.sample_file_path, &setup.valid_checksum).unwrap();
 
     assert_eq!(result.successful, true);
     assert_eq!(result.expected_digest, result.actual_digest.unwrap());
@@ -40,7 +41,7 @@ fn valid_file_path_checksum_matches() {
 fn invalid_file_path_checksum_does_not_match() {
     let setup = Setup::new();
     let invalid_checksum = setup.valid_checksum + "-invalid";
-    let result = check_file_path("sha256", &setup.sample_file_path, &invalid_checksum).unwrap();
+    let result = check_file_path(&SHA256, &setup.sample_file_path, &invalid_checksum).unwrap();
 
     assert_eq!(result.successful, false);
     assert_ne!(result.expected_digest, result.actual_digest.unwrap());
@@ -50,7 +51,7 @@ fn invalid_file_path_checksum_does_not_match() {
 fn valid_file_checksum_matches() {
     let setup = Setup::new();
     let mut sample_file = File::open(setup.sample_file_path).unwrap();
-    let result = check_file("sha256", &mut sample_file, &setup.valid_checksum).unwrap();
+    let result = check_file(&SHA256, &mut sample_file, &setup.valid_checksum).unwrap();
 
     assert_eq!(result.successful, true);
     assert_eq!(result.expected_digest, result.actual_digest.unwrap());
@@ -61,7 +62,7 @@ fn invalid_file_checksum_does_not_match() {
     let setup = Setup::new();
     let invalid_checksum = setup.valid_checksum + "-invalid";
     let mut sample_file = File::open(setup.sample_file_path).unwrap();
-    let result = check_file("sha256", &mut sample_file, &invalid_checksum).unwrap();
+    let result = check_file(&SHA256, &mut sample_file, &invalid_checksum).unwrap();
 
     assert_eq!(result.successful, false);
     assert_ne!(result.expected_digest, result.actual_digest.unwrap());

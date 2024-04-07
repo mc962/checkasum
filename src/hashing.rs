@@ -2,13 +2,14 @@ use data_encoding::HEXLOWER;
 use md5::Md5;
 use sha2::{Digest, Sha256};
 use std::fs::File;
-use std::{fmt, io};
 use std::io::Error;
 use std::path::Path;
+use std::{fmt, io};
 
 use crate::error::OptionError;
 
 /// Allowed hashing algorithms
+#[derive(clap::ValueEnum, Clone)]
 pub enum HashAlgorithm {
     SHA256,
     MD5,
@@ -19,7 +20,7 @@ impl fmt::Display for HashAlgorithm {
         // write!(f, "{}", self)
         match self {
             HashAlgorithm::SHA256 => f.write_str("sha256"),
-            HashAlgorithm::MD5 => f.write_str("md5")
+            HashAlgorithm::MD5 => f.write_str("md5"),
         }
     }
 }

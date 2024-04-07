@@ -4,11 +4,12 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
-pub mod hashing;
+use hashing::{hash_file_path, hash_matches};
+
 use crate::hashing::{hash_file, HashAlgorithm};
-use hashing::{algorithm_type, hash_file_path, hash_matches};
 
 pub mod error;
+pub mod hashing;
 
 /// Results after hashing contents of a file
 #[derive(Serialize, Deserialize, Debug)]
@@ -21,7 +22,11 @@ pub struct ChecksumResult {
 }
 
 /// Processes String created after hashing file into a result struct expected by external users
-fn process_result(method: &HashAlgorithm, expected: &str, hash_str: Result<String, Error>) -> ChecksumResult {
+fn process_result(
+    method: &HashAlgorithm,
+    expected: &str,
+    hash_str: Result<String, Error>,
+) -> ChecksumResult {
     let result = match hash_str {
         Ok(hash) => {
             if hash_matches(&hash, expected) {
@@ -63,6 +68,7 @@ fn process_result(method: &HashAlgorithm, expected: &str, hash_str: Result<Strin
 /// use std::env;
 /// use std::path::PathBuf;
 /// use checkasum::check_file_path;
+/// use checkasum::hashing::HashAlgorithm::SHA256;
 ///
 /// let sample_file_path: PathBuf = [
 ///             env::var("CARGO_MANIFEST_DIR").unwrap(),
@@ -71,31 +77,17 @@ fn process_result(method: &HashAlgorithm, expected: &str, hash_str: Result<Strin
 ///             "sample.txt".to_string()
 ///         ].iter().collect();
 ///
-/// let _result = check_file_path("sha256", &sample_file_path, &"test_digest".to_string());
+/// let _result = check_file_path(&SHA256, &sample_file_path, &"test_digest".to_string());
 /// ```
 pub fn check_file_path(
-    method: &str,
+    method: &HashAlgorithm,
     path: &PathBuf,
     expected: &str,
 ) -> Result<ChecksumResult, ChecksumResult> {
-    return match algorithm_type(method) {
-        Ok(algorithm) => {
-            let hash_str = hash_file_path(&algorithm, path);
+    let hash_str = hash_file_path(method, path);
+    let result = process_result(method, expected, hash_str);
 
-            let result = process_result(&algorithm, expected, hash_str);
-
-            Ok(result)
-        },
-        Err(reason) => {
-            Ok(ChecksumResult {
-                expected_digest: expected.to_string(),
-                actual_digest: None,
-                hashing_algorithm: method.to_string(),
-                successful: false,
-                message: Some(reason.to_string()),
-            })
-        }
-    }
+    Ok(result)
 }
 
 /// Checks uploaded file, comparing against an expected checksum digest, using a particular
@@ -108,34 +100,20 @@ pub fn check_file_path(
 /// use std::fs::File;
 /// use std::path::PathBuf;
 /// use checkasum::check_file;
+/// use checkasum::hashing::HashAlgorithm::SHA256;
 ///
 /// let mut file = File::create("tests/fixtures/tmp/foo.txt").unwrap();
 ///
-/// let _result = check_file("sha256", &mut file, &"test_digest".to_string());
+/// let _result = check_file(&SHA256, &mut file, &"test_digest".to_string());
 /// ```
 pub fn check_file(
-    method: &str,
+    method: &HashAlgorithm,
     infile: &mut File,
     expected: &str,
 ) -> Result<ChecksumResult, ChecksumResult> {
-    return match algorithm_type(method) {
-        Ok(algorithm) => {
-            let hash_str = hash_file(&algorithm, infile);
+    let hash_str = hash_file(method, infile);
 
-            let result = process_result(&algorithm, expected, hash_str);
+    let result = process_result(method, expected, hash_str);
 
-            Ok(result)
-        },
-        Err(reason) => {
-            Ok(ChecksumResult {
-                expected_digest: expected.to_string(),
-                actual_digest: None,
-                hashing_algorithm: method.to_string(),
-                successful: false,
-                message: Some(reason.to_string()),
-            })
-        }
-    };
-
-
+    Ok(result)
 }

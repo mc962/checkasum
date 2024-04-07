@@ -1,19 +1,18 @@
 extern crate core;
 
+use clap::Parser;
 use std::process::exit;
+
+use crate::cli::Options;
 use checkasum::check_file_path;
-// StructOpt import is required here for using its from_args method with Options
-use clap::StructOpt;
 
 pub mod hashing;
 
 mod cli;
-use cli::Options;
-
 mod error;
 
 fn main() {
-    let args = Options::from_args();
+    let args = Options::parse();
     let result = check_file_path(&args.method, &args.path, &args.expected);
 
     match result {
@@ -28,9 +27,11 @@ fn main() {
                     "Expected: {} | Actual: {}",
                     success_result.expected_digest, &actual_digest
                 );
-                println!(
-                    "Error: {}", success_result.message.unwrap_or("".to_string())
-                )
+
+                let additional_error_information = success_result.message.unwrap_or("".to_string());
+                if !additional_error_information.is_empty() {
+                    println!("Error: {}", additional_error_information)
+                }
             }
         }
         Err(error_result) => {
